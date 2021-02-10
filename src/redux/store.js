@@ -1,5 +1,7 @@
 // import { createStore } from 'redux';
+import { createReducer } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
+import { addContact, deleteContact, filterContact } from './action';
 
 const lsKey = 'contacts';
 const initialstate = () => {
@@ -12,60 +14,76 @@ const initialstate = () => {
     filter: '',
   };
 };
-
-// const contactsReducer = (state = initialstate(), { type, payload }) => {
-//   const { contacts } = state;
+const readState = initialstate();
+// const contactsReducer = (state = readState.contacts, { type, payload }) => {
+//   //const { contacts } = state;
 //   switch (type) {
+//     // case 'Phonebook/Addcontact':
+//     //   localStorage.setItem(lsKey, JSON.stringify([...state, payload]));
+//     //   return {
+//     //     contacts: [...state, payload],
+//     //   };
+//     // case 'Phonebook/Deletecontact':
+//     //   const filterConttact = state.filter(contact => contact.id !== payload);
+//     //   localStorage.setItem(lsKey, JSON.stringify(filterConttact));
+//     //   return {
+//     //     contacts: filterConttact,
+//     //   };
 //     case 'Phonebook/Addcontact':
-//       localStorage.setItem(lsKey, JSON.stringify([...contacts, payload]));
-//       return {
-//         ...state,
-//         contacts: [...contacts, payload],
-//       };
+//       localStorage.setItem(lsKey, JSON.stringify([...state, payload]));
+//       return [...state, payload];
 //     case 'Phonebook/Deletecontact':
-//       const filterConttact = contacts.filter(contact => contact.id !== payload);
+//       const filterConttact = state.filter(contact => contact.id !== payload);
 //       localStorage.setItem(lsKey, JSON.stringify(filterConttact));
-//       return {
-//         ...state,
-//         contacts: filterConttact,
-//       };
-
+//       return filterConttact;
 //     default:
 //       return state;
 //   }
 // };
 
-const reducer = (state = initialstate(), { type, payload }) => {
-  const { contacts } = state;
-  switch (type) {
-    case 'Phonebook/Addcontact':
-      localStorage.setItem(lsKey, JSON.stringify([...contacts, payload]));
-      return {
-        ...state,
-        contacts: [...contacts, payload],
-      };
-    case 'Phonebook/Deletecontact':
-      const filterConttact = contacts.filter(contact => contact.id !== payload);
-      localStorage.setItem(lsKey, JSON.stringify(filterConttact));
-      return {
-        ...state,
-        contacts: filterConttact,
-      };
-    case 'Phonebook/Filtercontact':
-      return {
-        ...state,
-        filter: payload,
-      };
-    default:
-      return state;
-  }
+// const contactsReducer = (state = readState.contacts, { type, payload }) => {
+//   switch (type) {
+//     case 'Phonebook/Addcontact':
+//       localStorage.setItem(lsKey, JSON.stringify([...state, payload]));
+//       return [...state, payload];
+//     case 'Phonebook/Deletecontact':
+//       const filterConttact = state.filter(contact => contact.id !== payload);
+//       localStorage.setItem(lsKey, JSON.stringify(filterConttact));
+//       return filterConttact;
+//     default:
+//       return state;
+//   }
+// };
+
+const deleteContactFormState = (state, { payload }) => {
+  const filterConttact = state.filter(contact => contact.id !== payload);
+  localStorage.setItem(lsKey, JSON.stringify(filterConttact));
+  return filterConttact;
 };
+const contactsReducer = createReducer(readState.contacts, {
+  [addContact]: (state, { payload }) => [...state, payload],
+  [deleteContact]: deleteContactFormState,
+});
+
+// const filterReducer = (state = readState.filter, { type, payload }) => {
+//   switch (type) {
+//     case 'Phonebook/Filtercontact':
+//       return payload;
+//     default:
+//       return state;
+//   }
+// };
+
+const filterReducer = createReducer(readState.filter, {
+  [filterContact]: (_, action) => action.payload,
+});
+
 // const store = createStore(reducer);
 const store = configureStore({
   reducer: {
-    todos: persistReducer(todosPersistConfig, todosReducer),
+    contacts: contactsReducer,
+    filter: filterReducer,
   },
-  middleware,
   devTools: process.env.NODE_ENV === 'development',
 });
 
