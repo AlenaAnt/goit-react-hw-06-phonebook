@@ -54,14 +54,17 @@ const readState = initialstate();
 //       return state;
 //   }
 // };
-
+const addContactFormState = (state, { payload }) => {
+  localStorage.setItem(lsKey, JSON.stringify([...state, payload]));
+  return [...state, payload];
+};
 const deleteContactFormState = (state, { payload }) => {
   const filterConttact = state.filter(contact => contact.id !== payload);
   localStorage.setItem(lsKey, JSON.stringify(filterConttact));
   return filterConttact;
 };
 const contactsReducer = createReducer(readState.contacts, {
-  [addContact]: (state, { payload }) => [...state, payload],
+  [addContact]: addContactFormState,
   [deleteContact]: deleteContactFormState,
 });
 

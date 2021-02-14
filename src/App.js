@@ -95,7 +95,7 @@ const App = ({
       contact.name.toLowerCase().includes(filterLowerCase),
     );
   };
-  contactFilter();
+  // contactFilter();
   return (
     <div className={style.wraper}>
       <div className={style.container}>

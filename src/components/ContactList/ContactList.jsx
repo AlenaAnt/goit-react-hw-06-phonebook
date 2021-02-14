@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const ContactList = props => {
   const { contacts, deleteContact } = props;
-
+  console.log(contacts);
   return (
     <>
       <ul className={style.contact_list}>
